@@ -1,7 +1,7 @@
 import React, { useState, useReducer, useContext } from 'react';
 import MyContext, { TodoProvider, TodoContext, TodoConsumer } from './context';
 import UpperCasedTitle from './upperCasedTitle';
-import counterReducer, { actions } from './reducer';
+import counterReducer, { actions, nameReducer } from './reducer';
 
 
 const initState = [{
@@ -29,9 +29,7 @@ const TodoList = () => {
 
 const Counter = () => {
   const [state, dispatch] = useReducer(counterReducer, { count: 0 });
-  const [user, setUser] = useState({
-    name: "Tony",
-  });
+  const [nameState, nameDispatch] = useReducer(nameReducer, { name: "Tony" });
 
   const handleIncrease = () => {
     dispatch({ type: actions.INCREASE });
@@ -43,7 +41,7 @@ const Counter = () => {
 
   return (
     <TodoProvider>
-      <MyContext.Provider value={{user, setUser, state}}>
+      <MyContext.Provider value={{nameState, state, nameDispatch}}>
         <div>
           <Title />
           <h1>Counter with Reducer</h1>
@@ -57,12 +55,6 @@ const Counter = () => {
         <section>
           <h1>My todos</h1>
           <TodoList />
-          {/* <todoContext.Consumer>
-            <ul>
-              <li>sad</li>
-              {(context) => context.map(todo => <li>{todo.todo}</li>)}
-            </ul>
-          </todoContext.Consumer> */}
         </section>
       </MyContext.Provider>
     </TodoProvider>
@@ -70,26 +62,31 @@ const Counter = () => {
 }
 
 const Title = () => {
-  const [title, setTitle] = useState(null)
-  const { user, setUser } = useContext(MyContext)
-  const handleSubmit = (e, fn) => {
-    e.preventDefault();
-    fn({ name: title});
-  }
-
+  const { nameState, nameDispatch } = useContext(MyContext);
   return (
     <MyContext.Consumer>
       {() => (
         <>
-          <h1>{user.name}</h1>
+          <h1>{nameState.name}</h1>
           <UpperCasedTitle />
-          <form onSubmit={e => handleSubmit(e, setUser)}>
-            <input type="text" name="name" onChange={(e) => setTitle(e.target.value)}/>
-            <button type="submit">Change my name</button>
-          </form>
+          <Form onSubmit={nameDispatch} type={actions.UPDATE_NAME}/>
         </>
       )}
     </MyContext.Consumer>
+  )
+}
+
+const Form = ({onSubmit, type}) => {
+  const [name, setName] = useState(null)
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit({ type, payload: name })
+  }
+  return (
+    <form onSubmit={handleSubmit}>
+      <input type="text" name="name" onChange={e => setName(e.target.value)} />
+      <button type="submit">Change my name</button>
+    </form>
   )
 }
 

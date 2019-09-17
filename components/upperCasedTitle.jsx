@@ -5,7 +5,7 @@ const UpperCasedTitle = () => {
   return (
     <MyContext.Consumer>
       {(context) => (
-        <h3>{context.user.name} has done of {context.state.count} times</h3>
+        <h3>{context.nameState.name} has done of {context.state.count} times</h3>
       )}
     </MyContext.Consumer>
   )
