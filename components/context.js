@@ -5,7 +5,7 @@ const MyContext = createContext({
   name: "Thanawat",
 });
 
-const initTodos = [
+export const initTodos = [
   {
     todo: "create todo context"
   }, {
@@ -13,15 +13,14 @@ const initTodos = [
   }
 ]
 
-export const TodoContext = createContext(initTodos)
+export const TodoContext = createContext()
 
 export const TodoProvider = props => {
-  const [todos, setTodos] = useState(initTodos);
-  return <TodoContext.Provider value={{ todos, setTodos }}>{props.children}</TodoContext.Provider>
+  return <TodoContext.Provider {...props}>{props.children}</TodoContext.Provider>
 }
 
 export const TodoConsumer = props => {
-  return <TodoContext.Consumer>{props.children}</TodoContext.Consumer>
+  return <TodoContext.Consumer {...props}>{props.children}</TodoContext.Consumer>
 }
 
 export default MyContext

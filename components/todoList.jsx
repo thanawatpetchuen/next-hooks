@@ -1,35 +1,35 @@
-import React, { useState, useReducer, useContext } from 'react';
-import MyContext, { TodoProvider, TodoContext, TodoConsumer } from './context';
+import React, { useState, useReducer } from 'react';
+import MyContext, { TodoProvider, TodoConsumer, initTodos } from './context';
 import UpperCasedTitle from './upperCasedTitle';
-import counterReducer, { actions, nameReducer } from './reducer';
-
-
-const initState = [{
-  name: 'a',
-  value: 2,
-}]
+import counterReducer, { actions, nameReducer, todoReducer } from './reducer';
 
 const TodoList = () => {
-  // const todos = useContext(TodoContext);
-  // console.log(todos.todos)
-  const render = (todos) => (
+  const handleClick = (e, index, dispatch) => {
+    e.preventDefault();
+    dispatch({ type: actions.REMOVE_TODO, payload: index });
+  }
+
+  const render = (todos, dispatch) => (
     <ul>
-      {(() => todos.map(todo => <li>{todo.todo}</li>))()}
+      {(() => todos.map((todo, index) => 
+        <li key={index} style={{ margin: '.5rem 0' }}>
+          {todo.todo}
+          <button style={{ margin: '0 .5rem' }} onClick={e => handleClick(e, index, dispatch)}>Remove</button>
+        </li>
+      ))()}
     </ul>
   )
   return (
-    // <TodoConsumer>
-    <TodoContext.Consumer>
-        {(context) => render(context.todos)}
-    </TodoContext.Consumer>
-    // </TodoConsumer>
+    <TodoConsumer>
+        {({ todoState, todoDispatch }) => render(todoState, todoDispatch)}
+    </TodoConsumer>
   )
 }
-
 
 const Counter = () => {
   const [state, dispatch] = useReducer(counterReducer, { count: 0 });
   const [nameState, nameDispatch] = useReducer(nameReducer, { name: "Tony" });
+  const [todoState, todoDispatch] = useReducer(todoReducer, [ ...initTodos, { todo: 'test' }]);
 
   const handleIncrease = () => {
     dispatch({ type: actions.INCREASE });
@@ -39,8 +39,14 @@ const Counter = () => {
     dispatch({ type: actions.DECREASE });
   }
 
+  const handleButtonClick = (e) => {
+    e.preventDefault();
+    const whatToDo = prompt('What to do?');
+    todoDispatch({ type: actions.ADD_TODO, payload: whatToDo })
+  }
+
   return (
-    <TodoProvider>
+    <TodoProvider value={{ todoState, todoDispatch }}>
       <MyContext.Provider value={{nameState, state, nameDispatch}}>
         <div>
           <Title />
@@ -55,6 +61,7 @@ const Counter = () => {
         <section>
           <h1>My todos</h1>
           <TodoList />
+          <button onClick={handleButtonClick}>Add Todo</button>
         </section>
       </MyContext.Provider>
     </TodoProvider>
@@ -62,10 +69,9 @@ const Counter = () => {
 }
 
 const Title = () => {
-  const { nameState, nameDispatch } = useContext(MyContext);
   return (
     <MyContext.Consumer>
-      {() => (
+      {({ nameState, nameDispatch }) => (
         <>
           <h1>{nameState.name}</h1>
           <UpperCasedTitle />
