@@ -30,9 +30,9 @@ export const nameReducer = (state, action) => {
 export const todoReducer = (state, action) => {
   switch (action.type) {
     case actions.ADD_TODO:
-      return [ ...state, { todo : action.payload } ]
+      return { ...state, todo: [...state.todo, { todo: action.payload, id: state.count+1 }], count: state.count+1 }
     case actions.REMOVE_TODO:
-      return state.filter(todo => todo.id != action.payload)
+      return { ...state, todo: state.todo.filter(todo => todo.id != action.payload) }
   }
 }
 

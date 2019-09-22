@@ -1,5 +1,4 @@
 import React, { createContext, useState } from 'react';
-import { uid } from 'react-uid';
 
 const MyContext = createContext({
   name: "Thanawat",
@@ -7,9 +6,14 @@ const MyContext = createContext({
 
 export const initTodos = [
   {
+    id: 1,
     todo: "create todo context"
   }, {
+    id: 2,
     todo: "create todo uid"
+  }, { 
+    id: 3,
+    todo: 'test' 
   }
 ]
 

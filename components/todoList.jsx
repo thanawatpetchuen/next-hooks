@@ -2,34 +2,12 @@ import React, { useState, useReducer } from 'react';
 import MyContext, { TodoProvider, TodoConsumer, initTodos } from './context';
 import UpperCasedTitle from './upperCasedTitle';
 import counterReducer, { actions, nameReducer, todoReducer } from './reducer';
-
-const TodoList = () => {
-  const handleClick = (e, index, dispatch) => {
-    e.preventDefault();
-    dispatch({ type: actions.REMOVE_TODO, payload: index });
-  }
-
-  const render = (todos, dispatch) => (
-    <ul>
-      {(() => todos.map((todo, index) => 
-        <li key={index} style={{ margin: '.5rem 0' }}>
-          {todo.todo}
-          <button style={{ margin: '0 .5rem' }} onClick={e => handleClick(e, index, dispatch)}>Remove</button>
-        </li>
-      ))()}
-    </ul>
-  )
-  return (
-    <TodoConsumer>
-        {({ todoState, todoDispatch }) => render(todoState, todoDispatch)}
-    </TodoConsumer>
-  )
-}
+import { TodoList2 } from './todoList2';
 
 const Counter = () => {
   const [state, dispatch] = useReducer(counterReducer, { count: 0 });
   const [nameState, nameDispatch] = useReducer(nameReducer, { name: "Tony" });
-  const [todoState, todoDispatch] = useReducer(todoReducer, [ ...initTodos, { todo: 'test' }]);
+  const [todoState, todoDispatch] = useReducer(todoReducer, { count: initTodos.length, todo: initTodos });
 
   const handleIncrease = () => {
     dispatch({ type: actions.INCREASE });
@@ -60,7 +38,7 @@ const Counter = () => {
         </div>
         <section>
           <h1>My todos</h1>
-          <TodoList />
+          <TodoList2 />
           <button onClick={handleButtonClick}>Add Todo</button>
         </section>
       </MyContext.Provider>
